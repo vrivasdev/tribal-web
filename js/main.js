@@ -10,11 +10,37 @@ document.getElementById('search-button')
 
             service.get(text, type)
                    .then(response => {
+                       const sorted = response.data.sort((a, b) => {
+                           console.log(a);
+                           let nameA = '';
+                           let nameB = '';
 
+                           if (type === 'person') {
+                               nameA = a.Name;
+                               nameB = b.Name;
+                           }
+                           if (type === 'show') {
+                               nameA = a.name;
+                               nameB = b.name;
+                           }
+                           if (type === 'movie' || type === 'music') {
+                               nameA = a.trackName;
+                               nameB = b.trackName;
+                           }
+
+                           if (nameA < nameB) {
+                            return -1;
+                           }
+                           if (nameA > nameB) {
+                            return 1;
+                          }
+                          return 0;
+                           
+                       });
                        const table = document.getElementById('table')
                                              .getElementsByTagName('tbody')[0];
                        table.innerHTML = '';
-                       response.data.forEach(row => {
+                       sorted.forEach(row => {
                            const newRow = table.insertRow();
                            let name = '';
                            let description = '';
@@ -33,7 +59,7 @@ document.getElementById('search-button')
                                break;
                                case 'movie':
                                    name = row.trackName
-                                   description = row.shortDescription;
+                                   description = row.longDescription;
                                    urlImg = 'img/music.jpeg'; 
                                case 'music':
                                    name = row.trackName
